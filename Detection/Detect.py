@@ -49,7 +49,6 @@ personCount = 0
 dishCount = 0
 
 total = get_number_from_file('saved_number.txt')
-save_number_to_file(get_current_day(), 'saved_date.txt')
 dateText = get_number_from_file('saved_date.txt')
 
 
@@ -59,7 +58,7 @@ while(1):
     bucket = storage.bucket()
     blob = bucket.get_blob("data/photo.jpg") #blob
     metadata = blob.metadata
-    print(metadata)
+    #print(metadata)
     if metadata == metadataBefore:
         continue
     arr = np.frombuffer(blob.download_as_string(), np.uint8) #array of bytes
@@ -140,17 +139,21 @@ while(1):
     else:
         selisih = 0
 
-    if dateNow >  dateText:
+    if dateNow > dateText:
         save_number_to_file(dateNow, 'saved_date.txt')
         total = 0
+        myData = {
+            'dishLeft' : selisih,
+            'total' : total
+        }
+    else:
+        myData = {
+            'dishLeft' : selisih,
+        }
 
     total += selisih
     save_number_to_file(total, 'saved_number.txt')
 
-    myData = {
-        'dishLeft' : selisih,
-        'total' : total
-    }
     antares.send(myData, 'desproKhalid', 'desproCam')
     cv2.imshow("Object Detection", image)
     #cv2.waitKey(0)
